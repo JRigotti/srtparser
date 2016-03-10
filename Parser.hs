@@ -1,5 +1,6 @@
 import Text.ParserCombinators.ReadP
 import Text.Printf
+import Data.List (intercalate)
 
 -- Creating an specific dateformat
 -- used in srt files
@@ -17,6 +18,9 @@ data LogEntry = LogEntry { logNumber :: Int
                          , start     :: SrtTime
                          , end       :: SrtTime
                          , message   :: String }
+                         
+instance Show LogEntry where
+    show (LogEntry logn st end msg) = intercalate "\n" [(show logn), (show st) ++ " --> " ++ (show end), msg]
     
 paddingZeros :: Int -> Int -> String
 paddingZeros n p = printf ("%0" ++ (show n) ++ "d") p
