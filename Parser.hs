@@ -36,6 +36,18 @@ digits :: ReadP Int
 digits = do
   parse <- many1 digit
   return $ read parse
+  
+srttime :: ReadP SrtTime
+srttime = do
+  h <- count 2 digit
+  char ':'
+  m <- count 2 digit
+  char ':'
+  s <- count 2 digit
+  char ','
+  ms <- count 3 digit
+  return $ SrtTime (read h) (read m) (read s) (read ms)
+  
 
 main :: IO ()
 main = do
