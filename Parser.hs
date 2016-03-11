@@ -47,8 +47,19 @@ srttime = do
   char ','
   ms <- count 3 digit
   return $ SrtTime (read h) (read m) (read s) (read ms)
-  
 
-main :: IO ()
-main = do
-  readFile "example.srt" >>= putStrLn
+eol :: ReadP String
+eol = string "\n"
+  <|> string "\r"
+  <|> string "\n\r"
+  <|> string "\r\n"  
+  
+srtentry :: ReadP LogEntry
+srtentry = do
+  num <- digits
+  eol
+  st  <- srttime
+  string " --> "
+  end <- srttime
+  eol
+  return $ LogEntry num st end ""
