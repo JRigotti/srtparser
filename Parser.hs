@@ -1,6 +1,7 @@
 import Text.ParserCombinators.ReadP
 import Text.Printf
 import Data.List (intercalate)
+import Control.Applicative
 
 -- Creating an specific dateformat
 -- used in srt files
@@ -25,5 +26,17 @@ instance Show LogEntry where
 paddingZeros :: Int -> Int -> String
 paddingZeros n p = printf ("%0" ++ (show n) ++ "d") p
 
+isDigit :: Char -> Bool
+isDigit c = any (c==) ['0'..'9']
+
+digit :: ReadP Char
+digit = satisfy isDigit
+
+digits :: ReadP Int
+digits = do
+  parse <- many1 digit
+  return $ read parse
+
 main :: IO ()
-main = putStr "Hello World"
+main = do
+  readFile "example.srt" >>= putStrLn
