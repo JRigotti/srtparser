@@ -2,6 +2,7 @@ import Text.ParserCombinators.ReadP
 import Text.Printf
 import Data.List (intercalate)
 import Control.Applicative
+import Data.Char (isPrint)
 
 -- Creating an specific dateformat
 -- used in srt files
@@ -62,4 +63,5 @@ srtentry = do
   string " --> "
   end <- srttime
   eol
-  return $ LogEntry num st end ""
+  msg <- manyTill (satisfy isPrint) (string "\n\n")
+  return $ LogEntry num st end msg
