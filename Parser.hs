@@ -2,7 +2,7 @@ import Text.ParserCombinators.ReadP
 import Text.Printf
 import Data.List (intercalate)
 import Control.Applicative
-import Data.Char (isPrint)
+import Data.Char (isPrint, isDigit)
 
 -- Creating an specific dateformat
 -- used in srt files
@@ -27,27 +27,21 @@ instance Show LogEntry where
 paddingZeros :: Int -> Int -> String
 paddingZeros n p = printf ("%0" ++ (show n) ++ "d") p
 
-isDigit :: Char -> Bool
-isDigit c = any (c==) ['0'..'9']
-
-digit :: ReadP Char
-digit = satisfy isDigit
-
 digits :: ReadP Int
 digits = do
-  parse <- many1 digit
+  parse <- many1 (satisfy isDigit)
   return $ read parse
   
 srttime :: ReadP SrtTime
 srttime = do
-  h <- count 2 digit
+  h <- digits
   char ':'
-  m <- count 2 digit
+  m <- digits
   char ':'
-  s <- count 2 digit
+  s <- digits
   char ','
-  ms <- count 3 digit
-  return $ SrtTime (read h) (read m) (read s) (read ms)
+  ms <- digits
+  return $ SrtTime h m s ms
 
 eol :: ReadP String
 eol = string "\n"
@@ -63,5 +57,5 @@ srtentry = do
   string " --> "
   end <- srttime
   eol
-  msg <- manyTill (satisfy isPrint) (string "\n\n")
+  msg <- manyTill (satisfy isPrint) (count 2 eol)
   return $ LogEntry num st end msg
