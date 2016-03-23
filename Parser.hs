@@ -2,14 +2,11 @@ module Parser where
 
 import Text.ParserCombinators.ReadP
 import Control.Applicative
-import Data.Char (isPrint, isDigit)
+import Data.Char (isAscii, isDigit)
 import Srt
 
-
 digits :: ReadP Int
-digits = do
-  parse <- many1 (satisfy isDigit)
-  return $ read parse
+digits = fmap read $ munch1 isDigit
   
 srttime :: ReadP SrtTime
 srttime = do
@@ -22,11 +19,8 @@ srttime = do
   ms <- digits
   return $ SrtTime h m s ms
 
-eol :: ReadP String
-eol = string "\n"
-  <|> string "\r"
-  <|> string "\n\r"
-  <|> string "\r\n"  
+eol :: ReadP ()
+eol = (string "\n" <|> string "\r" <|> string "\n\r" <|> string "\r\n") >> return ()
   
 srtentry :: ReadP LogEntry
 srtentry = do
@@ -36,5 +30,5 @@ srtentry = do
   string " --> "
   end <- srttime
   eol
-  msg <- manyTill (satisfy isPrint) (count 2 eol)
+  msg <- manyTill (satisfy isAscii) (count 2 eol)
   return $ LogEntry num st end msg
