@@ -19,10 +19,10 @@ instance Show SrtTime where
 data LogEntry = LogEntry { logNumber :: Int
                          , start     :: SrtTime
                          , end       :: SrtTime
-                         , message   :: String }
+                         , message   :: [String] }
                          
 instance Show LogEntry where
-    show (LogEntry logn st end msg) = intercalate "\n" [(show logn), (show st) ++ " --> " ++ (show end), msg]
+    show (LogEntry logn st end msg) = intercalate "\n" [(show logn), (show st) ++ " --> " ++ (show end), (let lines = intercalate "\n" msg in lines)]
     
 paddingZeros :: Int -> Int -> String
 paddingZeros n p = printf ("%0" ++ (show n) ++ "d") p
