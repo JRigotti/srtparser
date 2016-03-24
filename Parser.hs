@@ -38,3 +38,8 @@ srtentry = do
   eol
   msg <- many1 line
   return $ LogEntry num st end msg
+  
+main :: IO ()
+main = do
+  contents <- readFile "example.srt"
+  print $ readP_to_S (many1 srtentry) contents
