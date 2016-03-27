@@ -38,7 +38,14 @@ srtentry = do
   msg <- srtmsg
   return $ LogEntry num st end msg
   
+parseToSrtFormat :: ReadP [LogEntry] -> String -> String
+parseToSrtFormat p s = case readP_to_S p s of
+  [] -> error "Error parsing the file"
+  ps -> (unlines . map show . fst . last) ps
+  
 main :: IO ()
 main = do
+  let outputFile = "example0.srt"
   contents <- readFile "example.srt"
-  print $ readP_to_S (many1 srtentry) contents
+  writeFile outputFile (parseToSrtFormat (many1 srtentry) contents)
+  putStrLn $ "New file created: " ++ outputFile

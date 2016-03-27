@@ -22,7 +22,7 @@ data LogEntry = LogEntry { logNumber :: Int
                          , message   :: String }
                          
 instance Show LogEntry where
-    show (LogEntry logn st end msg) = intercalate "\n" [(show logn), (show st) ++ " --> " ++ (show end), msg]
+    show (LogEntry logn st end msg) = (intercalate "\n" [(show logn), (show st) ++ " --> " ++ (show end), msg]) ++ "\n"
     
 paddingZeros :: Int -> Int -> String
 paddingZeros n p = printf ("%0" ++ (show n) ++ "d") p
