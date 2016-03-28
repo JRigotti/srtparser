@@ -5,7 +5,7 @@ import Control.Applicative ((<|>))
 import Data.Char (isAscii, isDigit)
 import Srt
 import System.Environment (getArgs)
-import System.FilePath (takeFileName)
+import System.FilePath (replaceFileName, takeFileName)
 
 digits :: ReadP Int
 digits = fmap read $ munch1 isDigit
@@ -49,7 +49,7 @@ main :: IO ()
 main = do
   (filepath:args) <- getArgs
   contents <- readFile filepath
-  let outputFile = "new_" ++ (takeFileName filepath)
+  let outputFile = replaceFileName filepath ("new_" ++ takeFileName filepath)
       parsedSrt = parseToSrtFormat (many1 srtentry) contents
   writeFile outputFile parsedSrt
   putStrLn $ "New file created: " ++ outputFile
