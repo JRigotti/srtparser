@@ -4,6 +4,8 @@ import Text.ParserCombinators.ReadP
 import Control.Applicative ((<|>))
 import Data.Char (isAscii, isDigit)
 import Srt
+import System.Environment (getArgs)
+import System.FilePath (takeFileName)
 
 digits :: ReadP Int
 digits = fmap read $ munch1 isDigit
@@ -45,7 +47,10 @@ parseToSrtFormat p s = case readP_to_S p s of
   
 main :: IO ()
 main = do
-  let outputFile = "example0.srt"
-  contents <- readFile "example.srt"
-  writeFile outputFile (parseToSrtFormat (many1 srtentry) contents)
+  (filepath:args) <- getArgs
+  contents <- readFile filepath
+  let outputFile = "new_" ++ (takeFileName filepath)
+      parsedSrt = parseToSrtFormat (many1 srtentry) contents
+  writeFile outputFile parsedSrt
   putStrLn $ "New file created: " ++ outputFile
+  
