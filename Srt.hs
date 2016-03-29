@@ -26,3 +26,13 @@ instance Show LogEntry where
     
 paddingZeros :: Int -> Int -> String
 paddingZeros n p = printf ("%0" ++ (show n) ++ "d") p
+
+milliToSrtTime :: Int -> SrtTime
+milliToSrtTime t 
+  | t >= 86400000 = error "The number for conversion is too high"
+  | otherwise = SrtTime h m s ms
+  where  ms = t `mod` 1000
+         s  = (t `div` 1000) `mod` 60
+         m  = (t `div` 60000) `mod` 60
+         h  = t `div` 3600000
+    
