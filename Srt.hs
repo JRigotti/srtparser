@@ -35,4 +35,11 @@ milliToSrtTime t
          s  = (t `div` 1000) `mod` 60
          m  = (t `div` 60000) `mod` 60
          h  = t `div` 3600000
-    
+
+srtTimeToMilli :: SrtTime -> Int
+srtTimeToMilli st =
+  let h  = (hours st) * 3600000
+      m  = (minutes st) * 6000
+      s  = (seconds st) * 1000
+      ms = milli st
+  in h + m + s + ms 
