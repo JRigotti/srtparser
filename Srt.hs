@@ -24,6 +24,13 @@ data LogEntry = LogEntry { logNumber :: Int
 instance Show LogEntry where
     show (LogEntry logn st end msg) = (intercalate "\n" [(show logn), (show st) ++ " --> " ++ (show end), msg]) ++ "\n"
     
+data Op = Delay | Forward
+    
+syncTime :: SrtTime -> Op -> Int -> SrtTime
+syncTime st op t = milliToSrtTime $ (srtTimeToMilli st) `fn` t
+  where fn = case op of Delay   -> (-)
+                        Forward -> (+)
+    
 paddingZeros :: Int -> Int -> String
 paddingZeros n p = printf ("%0" ++ (show n) ++ "d") p
 
