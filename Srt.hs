@@ -1,6 +1,7 @@
 module Srt (
     SrtTime (SrtTime), 
-    LogEntry (LogEntry)
+    LogEntry (LogEntry),
+    Op (..)
 ) where
 
 import Data.List (intercalate)
@@ -24,7 +25,7 @@ data LogEntry = LogEntry { logNumber :: Int
 instance Show LogEntry where
     show (LogEntry logn st end msg) = (intercalate "\n" [(show logn), (show st) ++ " --> " ++ (show end), msg]) ++ "\n"
     
-data Op = Delay | Forward
+data Op = Delay | Forward deriving Show
     
 syncTime :: SrtTime -> Op -> Int -> SrtTime
 syncTime st op t = milliToSrtTime $ (srtTimeToMilli st) `fn` t

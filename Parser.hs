@@ -45,9 +45,15 @@ parseToSrtFormat p s = case readP_to_S p s of
   [] -> error "Error parsing the file"
   ps -> (unlines . map show . fst . last) ps
   
+operation :: String -> (Op, Int)
+operation ('+':xs) = (Forward, read xs)
+operation ('-':xs) = (Delay, read xs)
+operation xs       = (Forward, read xs)
+  
 main :: IO ()
 main = do
-  (filepath:args) <- getArgs
+  (filepath:optime:args) <- getArgs -- args passed by the user
+  let op = operation optime
   contents <- readFile filepath
   let outputFile = replaceFileName filepath ("new_" ++ takeFileName filepath)
       parsedSrt = parseToSrtFormat (many1 srtentry) contents
