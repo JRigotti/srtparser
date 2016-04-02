@@ -45,7 +45,7 @@ parseToSrtFormat p s = case readP_to_S p s of
   [] -> error "Error parsing the file"
   ps -> (unlines . map show . fst . last) ps
   
-operation :: String -> (Op, Int)
+operation :: String -> Sync
 operation ('+':xs) = (Forward, read xs)
 operation ('-':xs) = (Delay, read xs)
 operation xs       = (Forward, read xs)
