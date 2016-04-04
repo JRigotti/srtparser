@@ -2,13 +2,14 @@ module Srt (
     SrtTime (SrtTime), 
     LogEntry (LogEntry),
     Op (..),
-    Sync
+    SyncOp,
+    syncLog
 ) where
 
 import Data.List (intercalate)
 import Text.Printf (printf)
 
-type Sync = (Op, Int)
+type SyncOp = (Op, Int)
 
 data Op = Delay | Forward deriving Show
 
@@ -30,7 +31,10 @@ data LogEntry = LogEntry { logNumber :: Int
 instance Show LogEntry where
     show (LogEntry logn st end msg) = (intercalate "\n" [(show logn), (show st) ++ " --> " ++ (show end), msg]) ++ "\n"
     
-syncTime :: SrtTime -> Sync -> SrtTime
+syncLog :: LogEntry -> SyncOp -> LogEntry
+syncLog (LogEntry ln st ed msg) op = LogEntry ln (syncTime st op) (syncTime ed op) msg
+    
+syncTime :: SrtTime -> SyncOp -> SrtTime
 syncTime st op = milliToSrtTime $ (srtTimeToMilli st) `fn` t
   where t  = snd op
         fn = case fst op of Delay   -> (-)

@@ -40,12 +40,12 @@ srtentry = do
   msg <- srtmsg
   return $ LogEntry num st end msg
   
-parseToSrtFormat :: ReadP [LogEntry] -> String -> String
-parseToSrtFormat p s = case readP_to_S p s of
+parseToSrtFormat :: ReadP [LogEntry] -> String -> SyncOp -> String
+parseToSrtFormat p s op = case readP_to_S p s of
   [] -> error "Error parsing the file"
-  ps -> (unlines . map show . fst . last) ps
+  ps -> (unlines . map (show . (flip syncLog op)) . fst . last) ps
   
-operation :: String -> Sync
+operation :: String -> SyncOp
 operation ('+':xs) = (Forward, read xs)
 operation ('-':xs) = (Delay, read xs)
 operation xs       = (Forward, read xs)
@@ -56,7 +56,7 @@ main = do
   let op = operation optime
   contents <- readFile filepath
   let outputFile = replaceFileName filepath ("new_" ++ takeFileName filepath)
-      parsedSrt = parseToSrtFormat (many1 srtentry) contents
+      parsedSrt = parseToSrtFormat (many1 srtentry) contents op
   writeFile outputFile parsedSrt
   putStrLn $ "New file created: " ++ outputFile
   
